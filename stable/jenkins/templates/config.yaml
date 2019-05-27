@@ -122,6 +122,9 @@ data:
               <podRetention class="org.csanchez.jenkins.plugins.kubernetes.pod.retention.Default"/>
             </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
 {{- end -}}
+{{- if .Values.master.podTemplate }}
+{{ .Values.master.podTemplate | indent 6 }}
+{{- end }}
           </templates>
           <serverUrl>https://kubernetes.default</serverUrl>
           <skipTlsVerify>false</skipTlsVerify>

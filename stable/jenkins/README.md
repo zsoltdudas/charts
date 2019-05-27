@@ -238,6 +238,69 @@ securityRealm: |-
   </securityRealm>
 ```
 
+## Adding multiple pod templates
+
+`master.podTemplate` in values can be used to support multiple Kubernetes plugin jnlp-agent pod templates. For example, you can add an additional pod template besides the one specified under agent parameter.
+
+```yaml
+podTemplate: |-
+    <org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+      <inheritFrom></inheritFrom>
+      <name>podTemplateName</name>
+      <namespace></namespace>
+      <privileged>false</privileged>
+      <capOnlyOnAlivePods>false</capOnlyOnAlivePods>
+      <alwaysPullImage>false</alwaysPullImage>
+      <instanceCap>2147483647</instanceCap>
+      <slaveConnectTimeout>100</slaveConnectTimeout>
+      <idleMinutes>0</idleMinutes>
+      <activeDeadlineSeconds>0</activeDeadlineSeconds>
+      <label>jenkins-agent-label</label>
+      <nodeSelector></nodeSelector>
+      <nodeUsageMode>EXCLUSIVE</nodeUsageMode>
+      <customWorkspaceVolumeEnabled>false</customWorkspaceVolumeEnabled>
+      <workspaceVolume class="org.csanchez.jenkins.plugins.kubernetes.volumes.workspace.EmptyDirWorkspaceVolume">
+        <memory>false</memory>
+      </workspaceVolume>
+      <containers>
+        <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+          <name>jnlp</name>
+          <image>imageRegistryUrl</image>
+          <privileged>false</privileged>
+          <alwaysPullImage>true</alwaysPullImage>
+          <workingDir>/home/jenkins</workingDir>
+          <command></command>
+          <args>${computer.jnlpmac} ${computer.name}</args>
+          <ttyEnabled>false</ttyEnabled>
+          <resourceRequestCpu>200m</resourceRequestCpu>
+          <resourceRequestMemory>256Mi</resourceRequestMemory>
+          <resourceLimitCpu>200m</resourceLimitCpu>
+          <resourceLimitMemory>512Mi</resourceLimitMemory>
+          <envVars>
+            <org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
+              <key>JENKINS_URL</key>
+              <value>https:jenkinsUrl</value>
+            </org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
+          </envVars>
+          <ports/>
+          <livenessProbe>
+            <execArgs></execArgs>
+            <timeoutSeconds>0</timeoutSeconds>
+            <initialDelaySeconds>0</initialDelaySeconds>
+            <failureThreshold>0</failureThreshold>
+            <periodSeconds>0</periodSeconds>
+            <successThreshold>0</successThreshold>
+          </livenessProbe>
+        </org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+      </containers>
+      <envVars/>
+      <annotations/>
+      <imagePullSecrets/>
+      <nodeProperties/>
+      <podRetention class="org.csanchez.jenkins.plugins.kubernetes.pod.retention.Default"/>
+    </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+```
+
 ## Adding additional configs
 
 `master.additionalConfig` can be used to add additional config files in `config.yaml`. For example, it can be used to add additional config files for keycloak authentication.
